@@ -1,0 +1,390 @@
+﻿@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+
+:root {
+  --text: #f4f4f4;
+  --muted: #acacac;
+  --panel-border: #343434;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 25% 10%, #191919 0%, #0b0b0b 45%, #050505 100%);
+  color: var(--text);
+  font-family: "Press Start 2P", monospace;
+}
+
+body {
+  overflow: hidden;
+}
+
+#app {
+  width: 100vw;
+  height: 100vh;
+}
+
+.app-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  width: 100%;
+  height: 100%;
+}
+
+.viewport-wrap {
+  position: relative;
+  overflow: hidden;
+  border-right: 1px solid var(--panel-border);
+  background: #000;
+  min-height: 100%;
+}
+
+#game-host {
+  width: 100%;
+  height: 100%;
+}
+
+#game-host canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+
+#combat-fx {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.death-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(circle at 50% 45%, rgba(255, 30, 30, 0.2) 0%, rgba(120, 0, 0, 0.45) 46%, rgba(35, 0, 0, 0.9) 100%);
+  transition: opacity 200ms linear;
+  z-index: 5;
+}
+
+.death-overlay.active {
+  opacity: 1;
+}
+
+.death-title {
+  font-size: clamp(28px, 5vw, 64px);
+  letter-spacing: 5px;
+  color: #ffdbdb;
+  text-shadow: 0 0 10px rgba(255, 80, 80, 0.95), 0 0 26px rgba(255, 20, 20, 0.8);
+}
+
+.death-countdown {
+  font-size: clamp(12px, 1.8vw, 20px);
+  letter-spacing: 2px;
+  color: #ffeaea;
+  text-shadow: 0 0 8px rgba(255, 70, 70, 0.9);
+}
+
+#weapon-sprite {
+  position: absolute;
+  right: 12px;
+  bottom: -4px;
+  width: min(48vw, 540px);
+  height: auto;
+  transform-origin: 85% 90%;
+  pointer-events: none;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.65));
+  z-index: 6;
+}
+
+.hit-indicator {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.hit-top,
+.hit-bottom {
+  left: 50%;
+  width: min(34vw, 280px);
+  height: 24px;
+  transform: translateX(-50%);
+}
+
+.hit-top {
+  top: 8px;
+  background: linear-gradient(180deg, rgba(255, 70, 70, 0.7), rgba(255, 70, 70, 0));
+}
+
+.hit-bottom {
+  bottom: 8px;
+  background: linear-gradient(0deg, rgba(255, 70, 70, 0.7), rgba(255, 70, 70, 0));
+}
+
+.hit-left,
+.hit-right {
+  top: 50%;
+  width: 24px;
+  height: min(34vh, 220px);
+  transform: translateY(-50%);
+}
+
+.hit-left {
+  left: 8px;
+  background: linear-gradient(90deg, rgba(255, 70, 70, 0.7), rgba(255, 70, 70, 0));
+}
+
+.hit-right {
+  right: 8px;
+  background: linear-gradient(270deg, rgba(255, 70, 70, 0.7), rgba(255, 70, 70, 0));
+}
+
+.hit-pulse {
+  animation: hitPulse 230ms ease-out;
+}
+
+@keyframes hitPulse {
+  0% { opacity: 0.9; }
+  100% { opacity: 0; }
+}
+
+.hud-bottom {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  pointer-events: none;
+  z-index: 6;
+}
+
+.portrait-ring {
+  width: 122px;
+  height: 122px;
+  border: 3px solid #fff;
+  overflow: hidden;
+  background: #111;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.22);
+  flex: 0 0 auto;
+}
+
+.portrait-ring img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hp-block {
+  width: min(380px, 55vw);
+  border: 1px solid #404040;
+  background: rgba(0, 0, 0, 0.65);
+  padding: 8px 10px;
+}
+
+.hp-label {
+  color: var(--muted);
+  font-size: 10px;
+  margin-bottom: 6px;
+  letter-spacing: 1px;
+}
+
+.hp-bar-shell {
+  border: 1px solid #434343;
+  overflow: hidden;
+  background: #101010;
+  height: 14px;
+}
+
+.hp-bar-fill {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, #4cbc68, #76f69d);
+  transition: width 120ms linear;
+}
+
+.hp-text {
+  margin-top: 6px;
+  font-size: 10px;
+}
+
+.stamina-label {
+  color: var(--muted);
+  font-size: 10px;
+  margin-top: 10px;
+  margin-bottom: 6px;
+  letter-spacing: 1px;
+}
+
+.stamina-bar-shell {
+  border: 1px solid #434343;
+  overflow: hidden;
+  background: #101010;
+  height: 12px;
+}
+
+.stamina-bar-fill {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, #4a88d8, #7dc0ff);
+  transition: width 90ms linear;
+}
+
+.stamina-text {
+  margin-top: 6px;
+  font-size: 10px;
+}
+
+.side-panel {
+  border-left: 1px solid var(--panel-border);
+  background: linear-gradient(180deg, #151515 0%, #0c0c0c 100%);
+  padding: 14px;
+  font-size: 10px;
+}
+
+#minimap {
+  width: 100%;
+  display: block;
+  background: #040404;
+  border: 1px solid #3b3b3b;
+}
+
+.status {
+  margin-top: 10px;
+  min-height: 42px;
+  border: 1px solid #373737;
+  background: #0f0f0f;
+  padding: 8px;
+  line-height: 1.55;
+}
+
+.controls {
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.6;
+}
+
+.damage-pop {
+  position: absolute;
+  color: #fff;
+  font-weight: 700;
+  font-size: 24px;
+  text-shadow: 0 0 8px #fff;
+  animation: rise 500ms ease-out forwards;
+}
+
+@keyframes rise {
+  0% { opacity: 1; transform: translate(-50%, 0); }
+  100% { opacity: 0; transform: translate(-50%, -38px); }
+}
+
+.attack-flash {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0));
+  animation: flash 180ms ease-out forwards;
+}
+
+.enemy-hit-flash {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(255, 40, 40, 0.22), rgba(255, 40, 40, 0));
+  animation: flash 240ms ease-out forwards;
+}
+
+@keyframes flash {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.weapon-slots {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  margin-left: 2px;
+  transform: translateY(48px);
+}
+
+.weapon-slot {
+  width: 148px;
+  padding: 2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  opacity: 0.72;
+  transform: translateY(0);
+  transition: opacity 120ms ease-out, transform 120ms ease-out;
+  margin-left: -34px;
+}
+
+.weapon-slot.active {
+  opacity: 1;
+}
+
+.weapon-slot img {
+  width: 140px;
+  height: 140px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.weapon-key {
+  font-size: 13px;
+  color: #d6cde7;
+  transform: translateY(-66px);
+  margin-bottom: -66px;
+}
+
+.weapon-bounce {
+  animation: weaponBounce 220ms ease-out;
+}
+
+@keyframes weaponBounce {
+  0% { transform: translateY(0); }
+  35% { transform: translateY(-14px); }
+  100% { transform: translateY(0); }
+}
+
+@media (max-width: 980px) {
+  .app-shell {
+    grid-template-columns: 1fr 170px;
+  }
+
+  .portrait-ring {
+    width: 102px;
+    height: 102px;
+  }
+
+  .hp-block {
+    width: min(320px, 58vw);
+  }
+
+  .weapon-slot {
+    width: 116px;
+    margin-left: -24px;
+  }
+
+  .weapon-slot img {
+    width: 108px;
+    height: 108px;
+  }
+
+  #weapon-sprite {
+    width: min(60vw, 400px);
+  }
+}
